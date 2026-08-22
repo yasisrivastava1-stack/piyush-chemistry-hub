@@ -1,0 +1,63 @@
+{
+  "project": {
+    "name": "Piyush Chemistry Hub"
+  },
+  "database": {
+    "collections": {
+      "users": {
+        "description": "Registered users on the platform.",
+        "fields": {
+          "email": "string",
+          "role": "string",
+          "displayName": "string",
+          "createdAt": "timestamp",
+          "status": "string",
+          "lastLogin": "timestamp"
+        }
+      },
+      "content": {
+        "description": "Educational material.",
+        "fields": {
+          "title": "string",
+          "description": "string",
+          "class": "string",
+          "board": "string",
+          "subject": "string",
+          "chapter": "string",
+          "type": "string",
+          "url": "string",
+          "thumbnail": "string",
+          "visibility": "string",
+          "published": "boolean",
+          "createdAt": "timestamp",
+          "uploaderId": "string"
+        }
+      },
+      "questions": {
+        "description": "Question bank items.",
+        "fields": {
+          "text": "string",
+          "type": "string",
+          "options": "array",
+          "answer": "string",
+          "explanation": "string",
+          "class": "string",
+          "board": "string",
+          "chapter": "string",
+          "difficulty": "string",
+          "createdAt": "timestamp"
+        }
+      },
+      "activity_logs": {
+        "description": "Admin actions audit log.",
+        "fields": {
+          "adminId": "string",
+          "action": "string",
+          "target": "string",
+          "timestamp": "timestamp",
+          "details": "string"
+        }
+      }
+    }
+  }
+}

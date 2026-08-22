@@ -1,0 +1,64 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Function to check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Function to check if the user is an admin
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == "yasisrivastava1@gmail.com" ||
+        request.auth.uid in ['xsFI63Hy5jUkwFtQnjqThM9ZwGx1', 'cxsFI63Hy5jU', 'GOv6NaBAVJOFNUIgFRSc7FXmf7v1'] ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin")
+      );
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      // Only admins can modify other users' roles, but users can create their own document initially
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /content/{contentId} {
+      // Anyone authenticated can read published content. Admins can read all.
+      allow read: if isAuthenticated() && (resource.data.published == true || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    match /questions/{questionId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /boards/{boardId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /classes/{classId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /chapters/{chapterId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /topics/{topicId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /activity_logs/{logId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+  }
+}
