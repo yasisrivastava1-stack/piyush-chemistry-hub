@@ -2,15 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { collection, getCountFromServer, query, where } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { Users, FileText, Video, Download, HelpCircle, BookOpen, Clock } from 'lucide-react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from 'recharts';
 
 interface Stats {
   totalUsers: number;
@@ -21,16 +12,6 @@ interface Stats {
   totalVideos: number;
   totalQuestions: number;
 }
-
-const mockChartData = [
-  { name: 'Mon', downloads: 120 },
-  { name: 'Tue', downloads: 150 },
-  { name: 'Wed', downloads: 180 },
-  { name: 'Thu', downloads: 140 },
-  { name: 'Fri', downloads: 200 },
-  { name: 'Sat', downloads: 250 },
-  { name: 'Sun', downloads: 310 },
-];
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats>({
@@ -122,28 +103,8 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="col-span-1 lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="font-bold text-sm">Downloads Over Time</h3>
-              <a href="#" className="text-blue-600 text-[11px] font-semibold">View All</a>
-            </div>
-            <div className="h-64 w-full p-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={mockChartData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
-                  <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px' }} />
-                  <Bar dataKey="downloads" fill="#2563eb" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-        
-        <div className="col-span-1 space-y-6">
+      <div className="grid grid-cols-1 gap-8">
+        <div className="space-y-6">
            <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-xl shadow-lg text-white">
             <h3 className="font-bold text-sm mb-2">Global Notification</h3>
             <p className="text-xs text-blue-100 mb-4">Broadcast a message to all students immediately about upcoming board exams.</p>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { collection, query, orderBy, onSnapshot, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
-import { Search, Shield, UserX, UserCheck, MoreVertical } from 'lucide-react';
+import { Search, Shield, UserX, UserCheck, Eye, X, BookOpen, Clock, Calendar, Mail, GraduationCap } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface UserItem {
@@ -12,12 +12,16 @@ interface UserItem {
   status: string;
   createdAt: any;
   lastLogin: any;
+  studentClass?: string;
+  board?: string;
+  phone?: string;
 }
 
 export default function UsersManagement() {
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedUser, setSelectedUser] = useState<UserItem | null>(null);
 
   useEffect(() => {
     const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
@@ -29,6 +33,7 @@ export default function UsersManagement() {
       setUsers(items);
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
 
@@ -56,10 +61,11 @@ export default function UsersManagement() {
   );
 
   return (
-    <div className="overflow-hidden space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">User Management</h1>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Student & User Management</h1>
+          <p className="text-sm text-slate-500 mt-1">Manage user accounts and view detailed activity breakdowns.</p>
         </div>
       </div>
 
@@ -85,8 +91,8 @@ export default function UsersManagement() {
               <tr>
                 <th className="px-6 py-3">User</th>
                 <th className="px-6 py-3">Role</th>
+                <th className="px-6 py-3">Class/Board</th>
                 <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Joined</th>
                 <th className="px-6 py-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -115,17 +121,26 @@ export default function UsersManagement() {
                       </span>
                     </td>
                     <td className="px-6 py-3">
+                      {user.role === 'student' ? (
+                        <span className="text-slate-600 font-medium">
+                          {user.studentClass ? `Class ${user.studentClass}` : 'N/A'} • {user.board || 'N/A'}
+                        </span>
+                      ) : (
+                        <span className="text-slate-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-3">
                       {user.status === 'active' ? (
                         <span className="text-green-600 font-medium">● Active</span>
                       ) : (
                         <span className="text-red-500 font-medium">● Blocked</span>
                       )}
                     </td>
-                    <td className="px-6 py-3 text-slate-500">
-                      {user.createdAt ? format(user.createdAt.toDate(), 'MMM d, yyyy') : 'Unknown'}
-                    </td>
                     <td className="px-6 py-3 text-right">
                       <div className="flex items-center justify-end space-x-3">
+                        <button onClick={() => setSelectedUser(user)} className="text-blue-600 hover:text-blue-700" title="View Details & Activity">
+                          <Eye className="h-4 w-4" />
+                        </button>
                         <button onClick={() => toggleRole(user)} className="text-purple-600 hover:text-purple-700" title={user.role === 'admin' ? 'Demote to Student' : 'Make Admin'}>
                           <Shield className="h-4 w-4" />
                         </button>
@@ -141,6 +156,95 @@ export default function UsersManagement() {
           </table>
         </div>
       </div>
+
+      {/* User Details Modal */}
+      {selectedUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h2 className="text-lg font-bold text-slate-800">Student Profile & Activity</h2>
+              <button onClick={() => setSelectedUser(null)} className="text-slate-400 hover:text-slate-600">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto">
+              <div className="flex items-start space-x-4 mb-8">
+                <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-blue-600 font-bold text-2xl shadow-inner border border-blue-200/50">
+                  {selectedUser.displayName ? selectedUser.displayName.charAt(0).toUpperCase() : '?'}
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-slate-900">{selectedUser.displayName || 'Unnamed Student'}</h3>
+                  <div className="flex items-center text-sm text-slate-500 mt-1 space-x-4">
+                    <span className="flex items-center"><Mail className="h-3 w-3 mr-1" /> {selectedUser.email}</span>
+                  </div>
+                  <div className="mt-3 flex gap-2">
+                    <span className={`px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold rounded-full ${selectedUser.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                      {selectedUser.role}
+                    </span>
+                    <span className={`px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold rounded-full ${selectedUser.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                      {selectedUser.status}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center">
+                    <GraduationCap className="h-4 w-4 mr-1.5 text-blue-500" /> Academic Details
+                  </h4>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Class:</span>
+                      <span className="font-semibold text-slate-800">{selectedUser.studentClass || 'Not Set'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Board:</span>
+                      <span className="font-semibold text-slate-800">{selectedUser.board || 'Not Set'}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center">
+                    <Clock className="h-4 w-4 mr-1.5 text-purple-500" /> Account Timeline
+                  </h4>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Joined:</span>
+                      <span className="font-semibold text-slate-800">
+                        {selectedUser.createdAt ? format(selectedUser.createdAt.toDate(), 'MMM d, yyyy') : 'Unknown'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Last Login:</span>
+                      <span className="font-semibold text-slate-800">
+                        {selectedUser.lastLogin ? format(selectedUser.lastLogin.toDate(), 'MMM d, yyyy • h:mm a') : 'Unknown'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center border-b border-slate-100 pb-2">
+                  <BookOpen className="h-4 w-4 mr-2 text-indigo-500" /> Activity Breakdown
+                </h4>
+                
+                <div className="bg-white rounded-lg border border-slate-200 overflow-hidden text-sm">
+                  <div className="p-8 text-center bg-slate-50">
+                    <Calendar className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+                    <p className="text-slate-600 font-medium">Detailed progress tracking coming soon</p>
+                    <p className="text-xs text-slate-500 mt-1">This student has been verified and registered on the platform.</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

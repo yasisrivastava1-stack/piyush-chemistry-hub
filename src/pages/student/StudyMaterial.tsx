@@ -12,6 +12,7 @@ interface ContentItem {
   board: string;
   subject: string;
   chapter: string;
+  topic?: string;
   type: string;
   url: string;
   published: boolean;
@@ -151,7 +152,11 @@ export default function StudyMaterial() {
                   <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">{item.board}</span>
                 </div>
                 <h3 className="font-bold text-slate-800 text-sm mb-1">{item.title}</h3>
-                <p className="text-xs text-slate-500 font-medium mb-3">{item.chapter}</p>
+                <p className="text-xs text-slate-500 font-medium mb-3">
+                  {item.chapter}
+                  {item.topic && <span className="mx-1.5 text-slate-300">•</span>}
+                  {item.topic && <span className="text-blue-500">{item.topic}</span>}
+                </p>
                 {item.description && (
                   <p className="text-xs text-slate-600 line-clamp-2">{item.description}</p>
                 )}

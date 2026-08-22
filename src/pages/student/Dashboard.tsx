@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { collection, query, orderBy, limit, onSnapshot, where } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { useAuth } from '../../contexts/AuthContext';
-import { FileText, Video, HelpCircle, ArrowRight, DownloadCloud, Bookmark, PlayCircle } from 'lucide-react';
+import { FileText, Video, HelpCircle, ArrowRight, DownloadCloud, Bookmark, PlayCircle, MapPin, Phone } from 'lucide-react';
 import { Link } from 'react-router';
+import { APIProvider, Map, AdvancedMarker } from '@vis.gl/react-google-maps';
 
 interface ContentItem {
   id: string;
@@ -13,6 +14,7 @@ interface ContentItem {
   board: string;
   subject: string;
   chapter: string;
+  topic?: string;
   type: string;
   url: string;
   published: boolean;
@@ -147,6 +149,77 @@ export default function StudentDashboard() {
         </Link>
       </div>
 
+      {/* Coaching Centre Info & Map */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
+        <div className="p-6 md:p-8 md:w-1/2 flex flex-col justify-center space-y-6">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 tracking-tight mb-2">Our Coaching Centre</h2>
+            <p className="text-sm text-slate-500">Visit us for offline classes or reach out for support.</p>
+          </div>
+          
+          <div className="space-y-5">
+            <div className="flex items-start">
+              <div className="flex-shrink-0 mt-1">
+                <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-blue-50 text-blue-600">
+                  <Phone className="h-5 w-5" />
+                </div>
+              </div>
+              <div className="ml-4">
+                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Contact Number</h3>
+                <a href="tel:8563975583" className="text-lg font-bold text-blue-600 hover:text-blue-700 transition-colors">
+                  8563975583
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-start">
+              <div className="flex-shrink-0 mt-1">
+                <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-blue-50 text-blue-600">
+                  <MapPin className="h-5 w-5" />
+                </div>
+              </div>
+              <div className="ml-4">
+                <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Location</h3>
+                <p className="text-sm text-slate-700 font-medium leading-relaxed">
+                  Police Line, Subhash Nagar<br />
+                  Near Neelam Beauty Parlour
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-slate-100 min-h-[300px] md:w-1/2 relative border-t md:border-t-0 md:border-l border-slate-200">
+          {(import.meta as any).env.VITE_GOOGLE_MAPS_API_KEY ? (
+            <APIProvider apiKey={(import.meta as any).env.VITE_GOOGLE_MAPS_API_KEY}>
+              <Map 
+                defaultCenter={{ lat: 28.6402, lng: 77.1086 }} // Approximated coordinate for Subhash Nagar, Delhi
+                defaultZoom={15} 
+                mapId="DEMO_MAP_ID"
+                style={{ width: '100%', height: '100%', minHeight: '300px' }}
+                disableDefaultUI={true}
+                gestureHandling={'greedy'}
+                internalUsageAttributionIds={["gmp_mcp_codeassist_v1_aistudio"]}
+              >
+                <AdvancedMarker position={{ lat: 28.6402, lng: 77.1086 }}>
+                  <div className="bg-blue-600 text-white p-2.5 rounded-full shadow-xl border-2 border-white transform transition-transform hover:scale-110">
+                    <MapPin className="h-5 w-5" fill="currentColor" />
+                  </div>
+                </AdvancedMarker>
+              </Map>
+            </APIProvider>
+          ) : (
+             <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10 bg-slate-50">
+                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-3 border border-slate-200">
+                  <MapPin className="h-6 w-6 text-slate-400" />
+                </div>
+                <h3 className="text-sm font-bold text-slate-900 mb-1">Interactive Map Disabled</h3>
+                <p className="text-xs text-slate-500">Provide VITE_GOOGLE_MAPS_API_KEY to view map.</p>
+              </div>
+          )}
+        </div>
+      </div>
+
       {/* Recently Uploaded Content */}
       <div>
         <div className="flex items-center justify-between mb-4">
@@ -181,7 +254,11 @@ export default function StudentDashboard() {
                     <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">{item.board}</span>
                   </div>
                   <h3 className="font-bold text-slate-800 text-sm mb-1 line-clamp-2">{item.title}</h3>
-                  <p className="text-xs text-slate-500 font-medium">{item.chapter}</p>
+                  <p className="text-xs text-slate-500 font-medium">
+                    {item.chapter}
+                    {item.topic && <span className="mx-1.5 text-slate-300">•</span>}
+                    {item.topic && <span className="text-blue-500">{item.topic}</span>}
+                  </p>
                 </div>
                 <div className="px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
                   <span className="text-[10px] text-slate-400 font-medium">

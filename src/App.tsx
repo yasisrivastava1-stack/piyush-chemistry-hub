@@ -11,11 +11,11 @@ import UsersManagement from './pages/admin/Users';
 import QuestionBank from './pages/admin/QuestionBank';
 import ClassesAndBoards from './pages/admin/ClassesAndBoards';
 import ChaptersAndTopics from './pages/admin/ChaptersAndTopics';
-
 import StudentLayout from './components/student/StudentLayout';
 import StudentDashboard from './pages/student/Dashboard';
 import StudyMaterial from './pages/student/StudyMaterial';
 
+// Triggering a small code change to force GitHub sync
 export default function App() {
   return (
     <AuthProvider>
