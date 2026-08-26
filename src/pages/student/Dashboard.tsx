@@ -6,70 +6,15 @@ import { FileText, Video, HelpCircle, ArrowRight, DownloadCloud, Bookmark, PlayC
 import { Link } from 'react-router';
 import { APIProvider, Map, AdvancedMarker } from '@vis.gl/react-google-maps';
 
-interface ContentItem {
-  id: string;
-  title: string;
-  description: string;
-  class: string;
-  board: string;
-  subject: string;
-  chapter: string;
-  topic?: string;
-  type: string;
-  url: string;
-  published: boolean;
-  createdAt: any;
-}
-
 export default function StudentDashboard() {
   const { userData } = useAuth();
-  const [recentContent, setRecentContent] = useState<ContentItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [mapError, setMapError] = useState(false);
 
   useEffect(() => {
-    if (!userData) return;
-
-    // Build query based on student's class.
-    // Also, only show published content.
-    const studentClass = userData.studentClass || '12';
-    
-    // Using a simpler query that doesn't require composite indexes if possible, 
-    // but typically `published == true` and `class == studentClass` requires an index.
-    // To avoid index errors during generation, we will fetch published and filter class client-side if needed,
-    // or just assume the index might exist. Since I don't want to break if index is missing:
-    const q = query(
-      collection(db, 'content'),
-      where('published', '==', true)
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const items: ContentItem[] = [];
-      snapshot.forEach(doc => {
-        const data = doc.data() as ContentItem;
-        if (data.class === studentClass) {
-          items.push({ id: doc.id, ...data });
-        }
-      });
-      // Sort in memory to avoid composite index requirement
-      items.sort((a, b) => {
-        const dateA = a.createdAt?.toDate?.() || new Date(0);
-        const dateB = b.createdAt?.toDate?.() || new Date(0);
-        return dateB.getTime() - dateA.getTime();
-      });
-      setRecentContent(items.slice(0, 6)); // top 6 recent
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [userData]);
-
-  const getIconForType = (type: string) => {
-    switch (type) {
-      case 'video': return <PlayCircle className="h-4 w-4 text-purple-500" />;
-      case 'notes': return <FileText className="h-4 w-4 text-blue-500" />;
-      default: return <HelpCircle className="h-4 w-4 text-orange-500" />;
-    }
-  };
+    (window as any).gm_authFailure = () => {
+      setMapError(true);
+    };
+  }, []);
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-8">
@@ -190,8 +135,11 @@ export default function StudentDashboard() {
         </div>
         
         <div className="bg-slate-100 min-h-[300px] md:w-1/2 relative border-t md:border-t-0 md:border-l border-slate-200">
-          {(import.meta as any).env.VITE_GOOGLE_MAPS_API_KEY ? (
-            <APIProvider apiKey={(import.meta as any).env.VITE_GOOGLE_MAPS_API_KEY}>
+          {((import.meta as any).env.VITE_GOOGLE_MAPS_API_KEY || "").startsWith("AIza") && !mapError ? (
+            <APIProvider 
+              apiKey={(import.meta as any).env.VITE_GOOGLE_MAPS_API_KEY}
+              onError={() => setMapError(true)}
+            >
               <Map 
                 defaultCenter={{ lat: 28.6402, lng: 77.1086 }} // Approximated coordinate for Subhash Nagar, Delhi
                 defaultZoom={15} 
@@ -213,75 +161,15 @@ export default function StudentDashboard() {
                 <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-3 border border-slate-200">
                   <MapPin className="h-6 w-6 text-slate-400" />
                 </div>
-                <h3 className="text-sm font-bold text-slate-900 mb-1">Interactive Map Disabled</h3>
-                <p className="text-xs text-slate-500">Provide VITE_GOOGLE_MAPS_API_KEY to view map.</p>
+                <h3 className="text-sm font-bold text-slate-900 mb-1">
+                  {mapError || ((import.meta as any).env.VITE_GOOGLE_MAPS_API_KEY && !(import.meta as any).env.VITE_GOOGLE_MAPS_API_KEY.startsWith("AIza")) ? "Invalid Map Key" : "Interactive Map Disabled"}
+                </h3>
+                <p className="text-xs text-slate-500">
+                  {mapError || ((import.meta as any).env.VITE_GOOGLE_MAPS_API_KEY && !(import.meta as any).env.VITE_GOOGLE_MAPS_API_KEY.startsWith("AIza")) ? "Please provide a valid Google Maps API Key in settings (starts with 'AIza')." : "Provide VITE_GOOGLE_MAPS_API_KEY to view map."}
+                </p>
               </div>
           )}
         </div>
-      </div>
-
-      {/* Recently Uploaded Content */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-slate-800 tracking-tight">Recently Added for Class {userData?.studentClass || '12'}</h2>
-          <Link to="/study-materials" className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center">
-            View All <ArrowRight className="ml-1 h-3 w-3" />
-          </Link>
-        </div>
-        
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1,2,3].map(i => (
-              <div key={i} className="bg-slate-100 rounded-xl h-32 animate-pulse" />
-            ))}
-          </div>
-        ) : recentContent.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
-            <FileText className="h-8 w-8 text-slate-300 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-slate-600">No new study material found.</p>
-            <p className="text-xs text-slate-500 mt-1">Check back later when teachers upload new content for your class.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentContent.map(item => (
-              <div key={item.id} className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full overflow-hidden">
-                <div className="p-5 flex-1">
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="inline-flex items-center space-x-1 bg-slate-100 px-2 py-1 rounded text-[10px] font-bold text-slate-600 uppercase tracking-wider">
-                      {getIconForType(item.type)}
-                      <span className="ml-1">{item.type.replace('_', ' ')}</span>
-                    </span>
-                    <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">{item.board}</span>
-                  </div>
-                  <h3 className="font-bold text-slate-800 text-sm mb-1 line-clamp-2">{item.title}</h3>
-                  <p className="text-xs text-slate-500 font-medium">
-                    {item.chapter}
-                    {item.topic && <span className="mx-1.5 text-slate-300">•</span>}
-                    {item.topic && <span className="text-blue-500">{item.topic}</span>}
-                  </p>
-                </div>
-                <div className="px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
-                  <span className="text-[10px] text-slate-400 font-medium">
-                    {item.createdAt?.toDate().toLocaleDateString()}
-                  </span>
-                  <div className="flex space-x-2">
-                    {item.type === 'video' ? (
-                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-purple-600 text-white text-[10px] font-bold uppercase rounded hover:bg-purple-700 flex items-center">
-                        <PlayCircle className="mr-1 h-3 w-3" /> Watch
-                      </a>
-                    ) : (
-                      <>
-                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold uppercase rounded hover:bg-blue-700 flex items-center">
-                          <FileText className="mr-1 h-3 w-3" /> Read
-                        </a>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
     </div>
