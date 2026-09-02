@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "description": "",
+  "name": "PIYUSH CHEMISTRY HUB",
+  "description": "Educational platform for chemistry students.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
