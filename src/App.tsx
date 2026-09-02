@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 import Login from './pages/auth/Login';
@@ -18,8 +19,9 @@ import StudyMaterial from './pages/student/StudyMaterial';
 // Triggering a small code change to force GitHub sync
 export default function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
         <Routes>
           {/* Public Route */}
           <Route path="/login" element={<Login />} />
@@ -59,5 +61,6 @@ export default function App() {
         </Routes>
       </Router>
     </AuthProvider>
+    </ThemeProvider>
   );
 }

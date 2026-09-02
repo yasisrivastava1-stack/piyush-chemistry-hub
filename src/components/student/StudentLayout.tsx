@@ -7,7 +7,7 @@ export default function StudentLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex transition-colors duration-200">
       {/* Mobile sidebar backdrop */}
       {mobileMenuOpen && (
         <div 
@@ -22,20 +22,20 @@ export default function StudentLayout() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden text-slate-900 dark:text-slate-100">
         {/* Mobile Header */}
-        <header className="lg:hidden bg-white/90 backdrop-blur-md border-b border-slate-200 h-16 flex items-center px-4 sticky top-0 z-30 shadow-sm">
+        <header className="lg:hidden bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 h-16 flex items-center px-4 sticky top-0 z-30 shadow-sm transition-colors duration-200">
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="p-2 -ml-2 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-blue-50 focus:outline-none transition-colors"
+            className="p-2 -ml-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 focus:outline-none transition-colors"
           >
             <Menu className="h-6 w-6" />
           </button>
           <div className="flex items-center space-x-2.5 ml-3 flex-1 justify-center pr-8">
             <div className="w-7 h-7 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center font-bold text-white text-sm shadow-sm shadow-blue-500/20 transform -rotate-2">P</div>
             <div className="flex flex-col">
-              <span className="font-extrabold text-slate-900 text-[13px] tracking-tight uppercase leading-none">Piyush Chemistry</span>
-              <span className="text-blue-600 font-bold text-[9px] tracking-widest uppercase">Hub</span>
+              <span className="font-extrabold text-slate-900 dark:text-white text-[13px] tracking-tight uppercase leading-none transition-colors duration-200">Piyush Chemistry</span>
+              <span className="text-blue-600 dark:text-blue-400 font-bold text-[9px] tracking-widest uppercase transition-colors duration-200">Hub</span>
             </div>
           </div>
         </header>

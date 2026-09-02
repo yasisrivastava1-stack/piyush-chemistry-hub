@@ -105,12 +105,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 gap-8">
         <div className="space-y-6">
-           <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-xl shadow-lg text-white">
-            <h3 className="font-bold text-sm mb-2">Global Notification</h3>
-            <p className="text-xs text-blue-100 mb-4">Broadcast a message to all students immediately about upcoming board exams.</p>
-            <textarea className="w-full bg-blue-700/50 border border-blue-400/30 rounded p-2 text-xs text-white placeholder-blue-300" rows={3} placeholder="Type message here..."></textarea>
-            <button className="w-full mt-3 py-2 bg-white text-blue-700 rounded text-xs font-bold hover:bg-blue-50">Send Broadcast</button>
-          </div>
+           {/* Additional dashboard content can go here */}
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, create
 import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { auth, db } from '../../lib/firebase';
 import { useAuth, UserRole } from '../../contexts/AuthContext';
-import { Beaker } from 'lucide-react';
+import { Beaker, MapPin, Phone } from 'lucide-react';
 
 export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
@@ -266,6 +266,24 @@ export default function Login() {
             >
               {isLogin ? 'Need an account? Sign up' : 'Already have an account? Sign in'}
             </button>
+          </div>
+        </div>
+
+        {/* Contact Info Footer */}
+        <div className="mt-8 px-4 text-center text-slate-500">
+          <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8">
+            <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm">
+              <Phone className="h-4 w-4 text-blue-500" />
+              <a href="tel:8563975583" className="text-xs font-bold hover:text-blue-600 transition-colors">
+                8563975583
+              </a>
+            </div>
+            <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm">
+              <MapPin className="h-4 w-4 text-blue-500 flex-shrink-0" />
+              <span className="text-[11px] font-semibold text-slate-600">
+                Police Line, Subhash Nagar (Near Neelam Beauty Parlour)
+              </span>
+            </div>
           </div>
         </div>
       </div>

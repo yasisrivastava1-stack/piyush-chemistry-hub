@@ -12,11 +12,15 @@ import {
   Video,
   DownloadCloud,
   LogOut,
-  User as UserIcon
+  User as UserIcon,
+  Moon,
+  Sun
 } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export default function Sidebar({ onMobileClose }: { onMobileClose?: () => void }) {
   const { userData } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   
   return (
     <aside className="w-64 bg-[#0A0F1C] flex flex-col flex-shrink-0 fixed inset-y-0 z-50 border-r border-slate-800/60 shadow-xl">
@@ -75,6 +79,21 @@ export default function Sidebar({ onMobileClose }: { onMobileClose?: () => void 
           <UserIcon className="mr-3 h-4 w-4 flex-shrink-0" /> Profile
         </NavLink>
       </nav>
+
+      <div className="mt-auto px-4 py-2 border-t border-slate-800/60">
+        <button 
+          onClick={toggleTheme} 
+          className="flex w-full items-center justify-between p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-colors"
+        >
+          <div className="flex items-center space-x-3">
+            {theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+            <span className="text-xs font-semibold">{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</span>
+          </div>
+          <div className={`w-8 h-4 rounded-full flex items-center p-0.5 transition-colors ${theme === 'dark' ? 'bg-blue-600' : 'bg-slate-600'}`}>
+            <div className={`w-3 h-3 bg-white rounded-full shadow-sm transform transition-transform ${theme === 'dark' ? 'translate-x-4' : 'translate-x-0'}`} />
+          </div>
+        </button>
+      </div>
 
       <div className="p-4 border-t border-slate-800/60 flex items-center space-x-3 cursor-pointer hover:bg-slate-800/50 transition-colors" onClick={() => signOut(auth)}>
         <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0 text-slate-400">

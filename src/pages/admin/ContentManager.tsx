@@ -32,6 +32,7 @@ export default function ContentManager() {
   const [dbChapters, setDbChapters] = useState<DbChapter[]>([]);
   const [dbTopics, setDbTopics] = useState<DbTopic[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -110,14 +111,23 @@ export default function ContentManager() {
         });
       }
 
-      await addDoc(collection(db, 'content'), {
-        ...formData,
-        url: finalUrl,
-        uploaderId: user?.uid,
-        createdAt: serverTimestamp(),
-      });
+      if (editingId) {
+        const docRef = doc(db, 'content', editingId);
+        await updateDoc(docRef, {
+          ...formData,
+          url: finalUrl,
+        });
+      } else {
+        await addDoc(collection(db, 'content'), {
+          ...formData,
+          url: finalUrl,
+          uploaderId: user?.uid,
+          createdAt: serverTimestamp(),
+        });
+      }
 
       setShowForm(false);
+      setEditingId(null);
       setFile(null);
       setUploadProgress(0);
       setFormData({
@@ -150,6 +160,25 @@ export default function ContentManager() {
     }
   };
 
+  const handleEdit = (item: ContentItem) => {
+    setFormData({
+      title: item.title,
+      description: item.description,
+      class: item.class,
+      board: item.board,
+      subject: item.subject,
+      chapter: item.chapter,
+      topic: item.topic || '',
+      type: item.type,
+      url: item.url,
+      visibility: item.visibility || 'public',
+      published: item.published,
+    });
+    setEditingId(item.id);
+    setShowForm(true);
+    setFile(null);
+  };
+
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
@@ -174,7 +203,27 @@ export default function ContentManager() {
         </div>
         <div className="mt-4 sm:mt-0">
           <button
-            onClick={() => setShowForm(!showForm)}
+            onClick={() => {
+              if (showForm) {
+                setShowForm(false);
+                setEditingId(null);
+                setFormData({
+                  title: '',
+                  description: '',
+                  class: '12',
+                  board: 'CBSE',
+                  subject: 'Chemistry',
+                  chapter: '',
+                  topic: '',
+                  type: 'pdf',
+                  url: '',
+                  visibility: 'public',
+                  published: true,
+                });
+              } else {
+                setShowForm(true);
+              }
+            }}
             className="px-4 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded shadow-sm hover:bg-blue-700 flex items-center"
           >
             <Plus className="mr-1 h-4 w-4" />
@@ -185,7 +234,7 @@ export default function ContentManager() {
 
       {showForm && (
         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <h3 className="font-bold text-sm mb-4">Upload New Content</h3>
+          <h3 className="font-bold text-sm mb-4">{editingId ? 'Edit Content' : 'Upload New Content'}</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-2">
               <div>
@@ -230,7 +279,14 @@ export default function ContentManager() {
               </div>
               <div>
                 <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">Content Type</label>
-                <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value, url: ''})} className="block w-full rounded border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs px-3 py-1.5 border">
+                <select value={formData.type} onChange={e => {
+                  const newType = e.target.value;
+                  if ((formData.type === 'video' && newType !== 'video') || (formData.type !== 'video' && newType === 'video')) {
+                    setFormData({...formData, type: newType, url: ''});
+                  } else {
+                    setFormData({...formData, type: newType});
+                  }
+                }} className="block w-full rounded border-slate-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs px-3 py-1.5 border">
                   <option value="pdf">PDF Document</option>
                   <option value="notes">Notes</option>
                   <option value="video">Video Link</option>
@@ -246,8 +302,8 @@ export default function ContentManager() {
                   </>
                 ) : (
                   <>
-                    <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">Upload File</label>
-                    <input required type="file" onChange={e => setFile(e.target.files?.[0] || null)} className="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                    <label className="block text-[11px] font-bold text-slate-500 uppercase mb-1">Upload File {editingId && formData.url && '(Optional - Leave empty to keep existing)'}</label>
+                    <input required={!editingId || !formData.url} type="file" onChange={e => setFile(e.target.files?.[0] || null)} className="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
                   </>
                 )}
               </div>
@@ -263,7 +319,23 @@ export default function ContentManager() {
               </label>
             </div>
             <div className="flex justify-end space-x-2 pt-2">
-              <button type="button" onClick={() => setShowForm(false)} disabled={isUploading} className="px-4 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded shadow-sm hover:bg-slate-50 disabled:opacity-50">
+              <button type="button" onClick={() => {
+                setShowForm(false);
+                setEditingId(null);
+                setFormData({
+                  title: '',
+                  description: '',
+                  class: '12',
+                  board: 'CBSE',
+                  subject: 'Chemistry',
+                  chapter: '',
+                  topic: '',
+                  type: 'pdf',
+                  url: '',
+                  visibility: 'public',
+                  published: true,
+                });
+              }} disabled={isUploading} className="px-4 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded shadow-sm hover:bg-slate-50 disabled:opacity-50">
                 Cancel
               </button>
               <button type="submit" disabled={isUploading} className="px-4 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded shadow-sm hover:bg-blue-700 disabled:opacity-50 flex items-center">
@@ -346,7 +418,7 @@ export default function ContentManager() {
                         <button onClick={() => togglePublish(item)} className="text-slate-400 hover:text-slate-600" title={item.published ? "Unpublish" : "Publish"}>
                           {item.published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
-                        <button className="text-blue-600 hover:text-blue-700" title="Edit">
+                        <button onClick={() => handleEdit(item)} className="text-blue-600 hover:text-blue-700" title="Edit">
                           <Edit2 className="h-4 w-4" />
                         </button>
                         {deletingId === item.id ? (
