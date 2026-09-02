@@ -126,7 +126,23 @@ export default function Login() {
             Hub
           </div>
         </div>
-        <p className="mt-4 text-center text-xs font-bold text-slate-500 uppercase tracking-widest bg-slate-100 py-1.5 px-4 rounded-full inline-block mx-auto">
+        
+        <div className="mt-5 max-w-lg mx-auto text-center px-2">
+          <h1 className="text-[13px] sm:text-sm font-medium text-slate-600 leading-relaxed bg-white border border-slate-200 shadow-sm rounded-xl py-3 px-4">
+            <span className="block font-bold text-slate-800 text-base mb-1">Learn chemistry with Piyush Srivastava</span>
+            <span className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mt-1">
+              <span>Free Previous Year Question Paper</span>
+              <span className="text-blue-300 font-bold hidden sm:inline">|</span>
+              <span>Notes</span>
+              <span className="text-blue-300 font-bold hidden sm:inline">|</span>
+              <span>Question Bank</span>
+              <span className="text-blue-300 font-bold hidden sm:inline">|</span>
+              <span>CBSE and ISC All Board Exam Preparation</span>
+            </span>
+          </h1>
+        </div>
+
+        <p className="mt-6 text-center text-xs font-bold text-slate-500 uppercase tracking-widest bg-slate-100 py-1.5 px-4 rounded-full inline-block mx-auto">
           {isLogin ? 'Sign in to your dashboard' : 'Create a student account'}
         </p>
       </div>
