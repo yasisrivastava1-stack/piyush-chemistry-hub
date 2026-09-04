@@ -147,6 +147,10 @@ export default function Login() {
             <span className="px-3 py-1 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-sm font-semibold text-blue-50">Question bank</span>
             <span className="px-3 py-1 bg-gradient-to-r from-blue-500/50 to-indigo-500/50 border border-blue-400/30 rounded-lg text-sm font-semibold text-white shadow-sm">CBSE and ISC all board exam preparation</span>
           </div>
+          <div className="mt-6 inline-flex items-center space-x-2.5 bg-white/10 px-4 py-2.5 rounded-xl border border-white/20 backdrop-blur-sm shadow-sm">
+            <Phone className="w-5 h-5 text-blue-200" />
+            <span className="text-white font-bold tracking-wide">Call or WhatsApp: +91 8563975583</span>
+          </div>
           <p className="mt-6 text-blue-100 text-lg font-medium max-w-md leading-relaxed">
             Your ultimate destination for comprehensive exam preparation.
           </p>
@@ -216,6 +220,10 @@ export default function Login() {
             <span className="px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700">Notes</span>
             <span className="px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700">Question bank</span>
             <span className="px-2.5 py-1 bg-blue-50 border border-blue-200 rounded-lg text-xs font-bold text-blue-700">CBSE and ISC all board exam preparation</span>
+          </div>
+          <div className="mt-5 inline-flex items-center justify-center space-x-2 bg-indigo-50 px-4 py-2.5 rounded-xl border border-indigo-100 shadow-sm">
+            <Phone className="w-4 h-4 text-indigo-600" />
+            <span className="text-indigo-900 font-bold text-sm tracking-wide">Call/WhatsApp: +91 8563975583</span>
           </div>
         </div>
 
