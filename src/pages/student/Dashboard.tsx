@@ -34,7 +34,7 @@ export default function StudentDashboard() {
             </div>
           </div>
           <p className="text-blue-50 font-medium text-lg max-w-xl leading-relaxed bg-white/5 inline-block px-4 py-2 rounded-xl backdrop-blur-sm border border-white/10">
-            Welcome back, {userData?.displayName?.split(' ')[0] || 'Student'}! 👋 Your chemistry journey continues. Let's master those reactions and ace your board exams today.
+            Hello, {userData?.displayName?.split(' ')[0] || 'Student'}! 👋 Your chemistry journey continues. Let's master those reactions and ace your board exams today.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <span className="px-4 py-1.5 bg-white/20 hover:bg-white/30 transition-colors cursor-default rounded-full text-sm font-bold tracking-wide backdrop-blur-md border border-white/20 shadow-sm">

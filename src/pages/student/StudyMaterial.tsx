@@ -76,6 +76,10 @@ export default function StudyMaterial() {
     switch (type) {
       case 'video': return <PlayCircle className="h-4 w-4 text-purple-500" />;
       case 'notes': return <FileText className="h-4 w-4 text-blue-500" />;
+      case 'pdf': return <FileText className="h-4 w-4 text-red-500" />;
+      case 'question_paper': return <FileText className="h-4 w-4 text-green-500" />;
+      case 'sample_paper': return <FileText className="h-4 w-4 text-orange-500" />;
+      case 'worksheet': return <FileText className="h-4 w-4 text-teal-500" />;
       default: return <HelpCircle className="h-4 w-4 text-orange-500" />;
     }
   };
@@ -112,6 +116,8 @@ export default function StudyMaterial() {
             <option value="pdf">PDFs</option>
             <option value="video">Videos</option>
             <option value="question_paper">Question Papers</option>
+            <option value="sample_paper">Sample Papers</option>
+            <option value="worksheet">Worksheets</option>
           </select>
           <select
             value={selectedChapter}

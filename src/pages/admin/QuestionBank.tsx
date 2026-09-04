@@ -181,6 +181,7 @@ export default function QuestionBank() {
                   <option value="ICSE">ICSE</option>
                   <option value="ISC">ISC</option>
                   <option value="UP">UP Board</option>
+                  <option value="All">All Board Examinations</option>
                 </select>
               </div>
               <div className="col-span-2">

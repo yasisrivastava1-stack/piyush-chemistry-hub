@@ -275,6 +275,7 @@ export default function ContentManager() {
                   <option value="ICSE">ICSE</option>
                   <option value="ISC">ISC</option>
                   <option value="UP">UP Board</option>
+                  <option value="All">All Board Examinations</option>
                 </select>
               </div>
               <div>
@@ -292,6 +293,7 @@ export default function ContentManager() {
                   <option value="video">Video Link</option>
                   <option value="question_paper">Question Paper</option>
                   <option value="sample_paper">Sample Paper</option>
+                  <option value="worksheet">Worksheet</option>
                 </select>
               </div>
               <div>

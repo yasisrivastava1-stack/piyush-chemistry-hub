@@ -173,18 +173,42 @@ export default function UsersManagement() {
                 <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-blue-600 font-bold text-2xl shadow-inner border border-blue-200/50">
                   {selectedUser.displayName ? selectedUser.displayName.charAt(0).toUpperCase() : '?'}
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-slate-900">{selectedUser.displayName || 'Unnamed Student'}</h3>
-                  <div className="flex items-center text-sm text-slate-500 mt-1 space-x-4">
-                    <span className="flex items-center"><Mail className="h-3 w-3 mr-1" /> {selectedUser.email}</span>
+                <div className="flex-1 flex justify-between items-start">
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900">{selectedUser.displayName || 'Unnamed Student'}</h3>
+                    <div className="flex items-center text-sm text-slate-500 mt-1 space-x-4">
+                      <span className="flex items-center"><Mail className="h-3 w-3 mr-1" /> {selectedUser.email}</span>
+                    </div>
+                    <div className="mt-3 flex gap-2">
+                      <span className={`px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold rounded-full ${selectedUser.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                        {selectedUser.role}
+                      </span>
+                      <span className={`px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold rounded-full ${selectedUser.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {selectedUser.status}
+                      </span>
+                    </div>
                   </div>
-                  <div className="mt-3 flex gap-2">
-                    <span className={`px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold rounded-full ${selectedUser.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
-                      {selectedUser.role}
-                    </span>
-                    <span className={`px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold rounded-full ${selectedUser.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                      {selectedUser.status}
-                    </span>
+                  <div className="flex flex-col gap-2">
+                    <button 
+                      onClick={() => {
+                        toggleRole(selectedUser);
+                        setSelectedUser({...selectedUser, role: selectedUser.role === 'admin' ? 'student' : 'admin'});
+                      }}
+                      className="px-3 py-1.5 border border-slate-200 rounded text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center shadow-sm"
+                    >
+                      <Shield className="h-4 w-4 mr-1.5 text-purple-600" />
+                      {selectedUser.role === 'admin' ? 'Demote to Student' : 'Make Admin'}
+                    </button>
+                    <button 
+                      onClick={() => {
+                        toggleStatus(selectedUser);
+                        setSelectedUser({...selectedUser, status: selectedUser.status === 'active' ? 'blocked' : 'active'});
+                      }}
+                      className="px-3 py-1.5 border border-slate-200 rounded text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center shadow-sm"
+                    >
+                      {selectedUser.status === 'active' ? <UserX className="h-4 w-4 mr-1.5 text-red-500" /> : <UserCheck className="h-4 w-4 mr-1.5 text-green-600" />}
+                      {selectedUser.status === 'active' ? 'Block Account' : 'Unblock Account'}
+                    </button>
                   </div>
                 </div>
               </div>
