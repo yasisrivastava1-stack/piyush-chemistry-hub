@@ -118,6 +118,7 @@ export default function Login() {
     }
   };
 
+
   return (
     <div className="min-h-screen bg-slate-50 flex font-sans">
       {/* Left Panel - Branding (Hidden on mobile) */}
