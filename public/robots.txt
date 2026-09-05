@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://piyushchemistryhub.netlify.app/sitemap.xml
